@@ -1,5 +1,5 @@
-import simplejson as json
-import urllib2
+import json
+import urllib, urllib2
 import random
 import pprint
 
@@ -10,7 +10,6 @@ def random_movies(filename):
     with open(filename) as f:
         for row in f:
             name = row.strip()
-            name = name.replace(' ','+')
             movienames.append(name)
 
     random.shuffle(movienames)
@@ -44,7 +43,8 @@ def play(filename):
             if (index < end - 2):
 
                 print("Getting first movie..")
-                url = 'http://www.omdbapi.com/?t=' + movienames[index]
+                url = 'http://www.omdbapi.com/?%s' % (urllib.urlencode({'t': movienames[index]})) 
+                #print(url)
                 req = urllib2.urlopen(url)
                 movie_dict1 = json.loads(req.read().decode('UTF-8'))
                 rating1 = movie_dict1['imdbRating']
@@ -55,7 +55,7 @@ def play(filename):
 
                 title1 = movie_dict1['Title']
                 print('Getting second movie..')
-                url = 'http://www.omdbapi.com/?t=' + movienames[index + 1]
+                url = 'http://www.omdbapi.com/?%s' % (urllib.urlencode({'t': movienames[index + 1]})) 
                 req = urllib2.urlopen(url)
                 movie_dict2 = json.loads(req.read().decode('UTF-8'))          
                 rating2 = movie_dict2['imdbRating']
@@ -79,8 +79,7 @@ def play(filename):
                 break
         
             index += 1
-            char = raw_input('Want to play again? y to play, q to quit, m for more info about \
-                             these movies\n')
+            char = raw_input('Want to play again? y to play, q to quit, m for more info about these movies\n')
         if char == 'm':
             print(title1)
             pp.pprint(movie_dict1)
